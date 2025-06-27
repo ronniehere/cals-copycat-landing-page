@@ -10,6 +10,7 @@ const Header = () => {
     { label: "Features", href: "/#features" },
     { label: "How it Works", href: "/#how-it-works" },
     { label: "Pricing", href: "/#pricing" },
+    { label: "Blog", href: "/blog" },
     { label: "FAQ", href: "/#faq" },
     { label: "Contact", href: "/#contact" },
   ];
@@ -30,13 +31,13 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <a
+              <Link
                 key={item.label}
-                href={item.href}
+                to={item.href.startsWith('/#') ? item.href : item.href}
                 className="text-foreground hover:text-primary transition-colors font-inter font-medium"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -85,14 +86,14 @@ const Header = () => {
           <div className="md:hidden py-4 border-t">
             <nav className="flex flex-col space-y-4">
               {navItems.map((item) => (
-                <a
+                <Link
                   key={item.label}
-                  href={item.href}
+                  to={item.href.startsWith('/#') ? item.href : item.href}
                   className="text-foreground hover:text-primary transition-colors font-inter font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
-                </a>
+                </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-4">
                 {/* Mobile App Store Badge */}

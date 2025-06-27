@@ -1,66 +1,39 @@
 
 import React, { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Search, Calendar, Eye } from 'lucide-react';
-import { BlogPost, BlogFilters } from '@/types/blog';
+import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
-// Mock data for demonstration
-const mockBlogPosts: BlogPost[] = [
-  {
-    id: '1',
-    title: 'The Ultimate Guide to Calorie Tracking',
-    excerpt: 'Learn the fundamentals of calorie tracking and how to make it work for your lifestyle.',
-    content: 'Full content here...',
-    featuredImage: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=400&h=250&fit=crop',
-    category: 'Nutrition',
-    tags: ['calories', 'tracking', 'health'],
-    author: 'Cals Team',
-    publishedAt: '2024-01-15',
-    updatedAt: '2024-01-15',
-    slug: 'ultimate-guide-calorie-tracking',
-    isPublished: true,
-    views: 1250,
-    seoTitle: 'Ultimate Guide to Calorie Tracking | Cals',
-    seoDescription: 'Master calorie tracking with our comprehensive guide.',
-    imageAlt: 'Healthy meal with calorie tracking app'
-  },
-  {
-    id: '2',
-    title: 'AI-Powered Nutrition: The Future of Food Tracking',
-    excerpt: 'Discover how artificial intelligence is revolutionizing the way we track and understand nutrition.',
-    content: 'Full content here...',
-    featuredImage: 'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=400&h=250&fit=crop',
-    category: 'Technology',
-    tags: ['AI', 'nutrition', 'innovation'],
-    author: 'Tech Team',
-    publishedAt: '2024-01-10',
-    updatedAt: '2024-01-10',
-    slug: 'ai-powered-nutrition-future',
-    isPublished: true,
-    views: 890,
-  },
-  {
-    id: '3',
-    title: 'Meal Planning Made Simple',
-    excerpt: 'Effective strategies for meal planning that save time and help you stay on track with your nutrition goals.',
-    content: 'Full content here...',
-    featuredImage: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=250&fit=crop',
-    category: 'Nutrition',
-    tags: ['meal-planning', 'recipes', 'organization'],
-    author: 'Nutrition Team',
-    publishedAt: '2024-01-05',
-    updatedAt: '2024-01-05',
-    slug: 'meal-planning-made-simple',
-    isPublished: true,
-    views: 654,
-  }
-];
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  featured_image: string;
+  image_alt: string;
+  published_at: string;
+  views: number;
+  tags: string[];
+  categories: {
+    name: string;
+    slug: string;
+  };
+}
+
+interface BlogFilters {
+  category?: string;
+  tags?: string[];
+  sortBy: 'newest' | 'oldest' | 'popular';
+  search?: string;
+}
 
 const Blog = () => {
   const [filters, setFilters] = useState<BlogFilters>({
@@ -70,33 +43,64 @@ const Blog = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
 
-  const categories = Array.from(new Set(mockBlogPosts.map(post => post.category)));
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ['blog-posts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select(`
+          *,
+          categories (
+            name,
+            slug
+          )
+        `)
+        .eq('is_published', true)
+        .order('published_at', { ascending: false });
+
+      if (error) throw error;
+      return data as BlogPost[];
+    }
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name');
+
+      if (error) throw error;
+      return data;
+    }
+  });
 
   const filteredPosts = useMemo(() => {
-    let filtered = mockBlogPosts.filter(post => post.isPublished);
+    let filtered = posts;
 
     // Search filter
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
       filtered = filtered.filter(post =>
         post.title.toLowerCase().includes(searchTerm) ||
-        post.excerpt.toLowerCase().includes(searchTerm) ||
+        post.excerpt?.toLowerCase().includes(searchTerm) ||
         post.tags.some(tag => tag.toLowerCase().includes(searchTerm))
       );
     }
 
     // Category filter
     if (filters.category && filters.category !== 'all') {
-      filtered = filtered.filter(post => post.category === filters.category);
+      filtered = filtered.filter(post => post.categories?.slug === filters.category);
     }
 
     // Sort posts
     filtered.sort((a, b) => {
       switch (filters.sortBy) {
         case 'newest':
-          return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+          return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
         case 'oldest':
-          return new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime();
+          return new Date(a.published_at).getTime() - new Date(b.published_at).getTime();
         case 'popular':
           return b.views - a.views;
         default:
@@ -105,7 +109,7 @@ const Blog = () => {
     });
 
     return filtered;
-  }, [filters]);
+  }, [posts, filters]);
 
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
   const currentPosts = filteredPosts.slice(
@@ -121,9 +125,22 @@ const Blog = () => {
     });
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+        <Header />
+        <div className="container mx-auto px-4 py-32">
+          <div className="text-center">Loading...</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      <div className="container mx-auto px-4 py-16">
+      <Header />
+      <div className="container mx-auto px-4 py-32">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -157,7 +174,7 @@ const Blog = () => {
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
                 {categories.map(category => (
-                  <SelectItem key={category} value={category}>{category}</SelectItem>
+                  <SelectItem key={category.id} value={category.slug}>{category.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -184,15 +201,15 @@ const Blog = () => {
             <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
               <div className="aspect-video overflow-hidden">
                 <img
-                  src={post.featuredImage}
-                  alt={post.imageAlt || post.title}
+                  src={post.featured_image}
+                  alt={post.image_alt || post.title}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                 />
               </div>
               
               <CardHeader className="flex-1">
                 <div className="flex items-center justify-between mb-2">
-                  <Badge variant="secondary">{post.category}</Badge>
+                  <Badge variant="secondary">{post.categories?.name}</Badge>
                   <div className="flex items-center text-sm text-gray-500">
                     <Eye className="h-4 w-4 mr-1" />
                     {post.views}
@@ -214,7 +231,7 @@ const Blog = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center text-sm text-gray-500">
                     <Calendar className="h-4 w-4 mr-1" />
-                    {formatDate(post.publishedAt)}
+                    {formatDate(post.published_at)}
                   </div>
                   
                   <Link
@@ -280,6 +297,7 @@ const Blog = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };
