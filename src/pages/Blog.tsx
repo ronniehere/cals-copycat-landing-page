@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { Search, Calendar, Eye } from 'lucide-react';
+import { Search, Calendar } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -210,10 +210,6 @@ const Blog = () => {
               <CardHeader className="flex-1">
                 <div className="flex items-center justify-between mb-2">
                   <Badge variant="secondary">{post.categories?.name}</Badge>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Eye className="h-4 w-4 mr-1" />
-                    {post.views}
-                  </div>
                 </div>
                 
                 <CardTitle className="line-clamp-2 hover:text-blue-600 transition-colors">

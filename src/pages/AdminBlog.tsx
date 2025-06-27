@@ -113,9 +113,21 @@ const AdminBlog = () => {
       const slug = post.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || '';
       const now = new Date().toISOString();
       
+      // Clean the post data to match database schema
       const postData = {
-        ...post,
+        title: post.title,
         slug,
+        excerpt: post.excerpt,
+        content: post.content,
+        featured_image: post.featured_image,
+        image_alt: post.image_alt,
+        category_id: post.category_id,
+        tags: post.tags || [],
+        author: post.author,
+        seo_title: post.seo_title,
+        seo_description: post.seo_description,
+        is_published: post.is_published,
+        is_draft: post.is_draft,
         updated_at: now,
         published_at: post.is_published ? (post.published_at || now) : null
       };
@@ -474,7 +486,6 @@ const AdminBlog = () => {
                         <TableHead>Title</TableHead>
                         <TableHead>Category</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Views</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
@@ -491,7 +502,6 @@ const AdminBlog = () => {
                               {post.is_published ? 'Published' : post.is_draft ? 'Draft' : 'Unpublished'}
                             </Badge>
                           </TableCell>
-                          <TableCell>{post.views}</TableCell>
                           <TableCell>
                             {post.published_at ? new Date(post.published_at).toLocaleDateString() : 'Not published'}
                           </TableCell>
@@ -635,6 +645,40 @@ const AdminBlog = () => {
                 </CardContent>
               </Card>
             </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Individual Post Views</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Views</TableHead>
+                      <TableHead>Published Date</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {posts.map((post) => (
+                      <TableRow key={post.id}>
+                        <TableCell className="font-medium">{post.title}</TableCell>
+                        <TableCell>
+                          <Badge variant={post.is_published ? "default" : "outline"}>
+                            {post.is_published ? 'Published' : 'Draft'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="font-semibold">{post.views}</TableCell>
+                        <TableCell>
+                          {post.published_at ? new Date(post.published_at).toLocaleDateString() : 'Not published'}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
