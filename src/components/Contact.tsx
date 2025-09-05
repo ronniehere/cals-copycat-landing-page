@@ -101,15 +101,15 @@ const Contact = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-start space-x-4">
+                {/* <div className="flex items-start space-x-4">
                   <Phone className="h-6 w-6 text-primary mt-1" />
                   <div>
                     <h4 className="font-semibold text-foreground font-inter">Phone</h4>
                     <p className="text-muted-foreground font-inter">+966 54 461 9829</p>
                   </div>
-                </div>
+                </div> */}
                 
-                <div className="flex items-start space-x-4">
+                {/* <div className="flex items-start space-x-4">
                   <MapPin className="h-6 w-6 text-primary mt-1" />
                   <div>
                     <h4 className="font-semibold text-foreground font-inter">Address</h4>
@@ -119,7 +119,7 @@ const Contact = () => {
                       Saudi Arabia
                     </p>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
             
@@ -134,7 +134,7 @@ const Contact = () => {
           
           {/* Contact Form */}
           <div className="bg-card border rounded-2xl p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6" action="https://formsubmit.co/support@mycals.io" method="POST">
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name" className="font-inter">Name</Label>

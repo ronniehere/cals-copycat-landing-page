@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import AdminBlog from "./pages/AdminBlog";
+import PrivacyApp from "./pages/PrivacyApp";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/admin/blog" element={<AdminBlog />} />
             <Route path="/privacy-policy" element={<Privacy />} />
+            <Route path="/privacy-policy-app" element={<PrivacyApp />} />
             <Route path="/terms-of-use" element={<Terms />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

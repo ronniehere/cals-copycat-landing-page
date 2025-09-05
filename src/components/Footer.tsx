@@ -20,6 +20,10 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               {/* App Store Badge */}
+              <a 
+                href="https://apps.apple.com/us/app/cals-ai-calorie-tracker/id6746816939" 
+                target="_blank" 
+                rel="noopener noreferrer">
               <div className="bg-black text-white rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer hover:bg-gray-800 transition-colors">
                 <div className="text-white">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -30,6 +34,7 @@ const Footer = () => {
                   <div className="text-xs">App Store</div>
                 </div>
               </div>
+              </a>
 
               {/* Google Play Badge */}
               <div className="bg-black text-white rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer hover:bg-gray-800 transition-colors">

@@ -143,10 +143,10 @@ const Blog = () => {
       <div className="container mx-auto px-4 py-32">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 font-playfair">
             Cals Blog
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-inter">
             Discover insights, tips, and the latest updates on nutrition, health, and AI-powered food tracking.
           </p>
         </div>

@@ -22,6 +22,11 @@ const Hero = () => {
             {/* Custom App Store Badges */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               {/* App Store Badge */}
+              <a 
+                href="https://apps.apple.com/us/app/cals-ai-calorie-tracker/id6746816939" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                >
               <div className="bg-black text-white rounded-lg px-6 py-3 flex items-center space-x-3 cursor-pointer hover:bg-gray-800 transition-colors w-fit">
                 <div className="text-white">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -33,6 +38,7 @@ const Hero = () => {
                   <div className="text-lg font-semibold leading-none">App Store</div>
                 </div>
               </div>
+              </a>
 
               {/* Google Play Badge */}
               <div className="bg-black text-white rounded-lg px-6 py-3 flex items-center space-x-3 cursor-pointer hover:bg-gray-800 transition-colors w-fit">
@@ -54,7 +60,7 @@ const Hero = () => {
               <img 
                 src="/lovable-uploads/527d37a2-2bd9-446b-b7b5-1ad2d8ba8d22.png" 
                 alt="Cals App Screenshot" 
-                className="w-full max-w-sm mx-auto rounded-2xl shadow-2xl"
+                className="w-full max-w-sm lg:max-w-xs mx-auto"
               />
             </div>
           </div>
